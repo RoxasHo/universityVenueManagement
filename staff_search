@@ -1,0 +1,43 @@
+#!/bin/bash
+
+filepath=/home/vboxuser/staff.txt
+echo
+echo -e "\033[4mSearch Staff Screen\033[0m" | sed -e :a -e "s/^.\{1,$(tput cols)\}$/ & /;ta" | tr -d '\n' | head -c $(tput cols)
+echo
+echo
+staffID=""
+while [ -z "$staffID" ]
+do
+ echo -n "Enter Staff ID: "
+ read staffID
+ if [ -z "$staffID" ]
+ then
+  echo
+  echo -e "+================================+"
+  echo -e "|The input field cannot be empty!|"
+  echo -e "+================================+"
+  echo
+ fi
+done
+echo
+printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+echo
+awk -F':' -v staffID="$staffID" '$1 == staffID {print "Full Name: " $2}' $filepath
+awk -F':' -v staffID="$staffID" '$1 == staffID {print "Faculty & Programme: " $3}' $filepath
+awk -F':' -v staffID="$staffID" '$1 == staffID {print "Contact Number: " $4}' $filepath
+awk -F':' -v staffID="$staffID" '$1 == staffID {print "Email Address: " $5}' $filepath
+
+echo
+echo -e "Search Another Staff? (y)es or (q)uit: "
+echo
+echo -e "Press (q) to return to \033[1mUniversity Venue Management Menu\033[0m."
+read -n 1 -s srchChoice
+case "$srchChoice" in
+ q|Q) bash main_menu ;;
+ y|Y) bash staff_search ;;
+ *) echo
+    echo -e "+==============+"
+    echo -e "|Invalid input!|"
+    echo -e "+==============+"
+    bash staff_search ;;
+esac

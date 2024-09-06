@@ -1,0 +1,41 @@
+#!/bin/bash
+
+echo
+echo "Register Staff Screen"
+echo "========================"
+echo -n "Staff ID: "
+read staffID
+echo -n "Full Name (As per NRIC): "
+read staffName
+echo -n "Faculty: "
+read staffFaculty
+echo -n "Contact Number: "
+read contactNum
+echo -n "TAR UC Email Address: "
+read staffEmail
+echo
+
+if [ -n "$staffID" -a -n "$staffName" -a -n "$staffFaculty" -a -n "$contactNum" -a -n "$staffEmail" ]
+then
+ echo "$staffID:$staffName:$staffFaculty:$contactNum:$staffEmail" >> staff.txt
+else
+ echo
+ echo -e "+=================+"
+ echo -e "|Incomplete input!|"
+ echo -e "+=================+" 
+ bash staff_register
+fi
+
+echo -e "Register Another Staff? (y)es or (q)uit: "
+echo
+echo -e "Press (q) to return to \033[1mUniversity Venue\033[0m Management Menu"
+read -n 1 -s  regChoice
+case "$regChoice" in
+ q|Q) bash main_menu ;;
+ y|Y) bash staff_register ;;
+ *) echo
+    echo -e "+==============+"
+    echo -e "|Invalid input!|"
+    echo -e "+==============+" 
+    bash staff_register ;;
+esac

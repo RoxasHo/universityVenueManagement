@@ -1,0 +1,31 @@
+#!/bin/bash
+
+loop=y
+while [ "$loop"="y" ]
+do
+ echo
+ echo -e "\033[1mUniversity Venue Management Menu\033[0m"
+ echo
+ echo "A -- Register New Staff"
+ echo "B -- Search Staff Details"
+ echo "C -- Add New Venue"
+ echo "D -- List Venue"
+ echo "E -- Book Venue"
+ echo
+ echo "Q -- Exit from Program"
+ echo
+ echo -n "Please select a choice: "
+ read menuChoice
+ case "$menuChoice" in
+  a|A) bash staff_register ;;
+  b|B) bash staff_search ;;
+  c|C) bash venue_add ;;
+  d|D) bash venue_list ;;
+  e|E) bash venue_book_validate ;;
+  q|Q) exit 0 ;;
+  *) echo
+     echo -e "+===================================+"
+     echo -e "|Invalid choice, please enter again.|"
+     echo -e "+===================================+" ;;
+ esac
+done

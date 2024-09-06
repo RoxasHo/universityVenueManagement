@@ -1,0 +1,133 @@
+#!/bin/bash
+
+filepath=/home/vboxuser/staff.txt
+filepath2=/home/vboxuser/venue.txt
+echo
+echo -e "\033[1mStaff Details Validation Screen\033[0m" | sed -e :a -e "s/^.\{1,$(tput cols)\}$/ & /;ta" | tr -d '\n' | head -c $(tput cols)
+echo
+echo
+staffID=""
+while [ -z "$staffID" ]
+do
+ echo -n "Please enter the Staff's ID Number: "
+ read staffID
+ if [ -z "$staffID" ]
+ then
+  echo
+  echo -e "+================================+"
+  echo -e "|The input field cannot be empty!|"
+  echo -e "+================================+"
+  echo
+ fi
+done
+
+echo
+awk -F':' -v staffID="$staffID" '$1 == staffID {print "Staff Name: " $2}' $filepath
+staffName=$(awk -F':' -v staffID="$staffID" '$1 == staffID {print $2}' $filepath)
+echo
+echo -e "Press (n) to proceed Book Venue or (q) to return to \033[3;1mUniversity Venue\033[0m\033[1m Management Menu\033[0m."
+read -n 1 -s bookChoice
+case "$bookChoice" in
+ n|N) echo
+      echo -e "\033[1mBook Venue Screen\033[0m" | sed -e :a -e "s/^.\{1,$(tput cols)\}$/ & /;ta" | tr -d '\n' | head -c $(tput cols)
+      echo
+      echo
+      roomNo=""
+      while [ -z "$roomNo" ]
+      do
+       echo -n "Please enter the Room Number: "
+       read roomNo
+       if [ -z "$roomNo" ]
+       then
+        echo
+  	echo -e "+================================+"
+  	echo -e "|The input field cannot be empty!|"
+  	echo -e "+================================+"
+  	echo
+       fi
+      done
+      echo
+      awk -F':' -v roomNo="$roomNo" '$2 == roomNo {print "Room Type: " $3}' $filepath2
+      awk -F':' -v roomNo="$roomNo" '$2 == roomNo {print "Capacity: " $4}' $filepath2
+      awk -F':' -v roomNo="$roomNo" '$2 == roomNo {print "Remarks: " $5}' $filepath2
+      echo
+      echo -e "Please \033[1menter\033[0m the following details: "
+      echo
+      while true
+      do
+       echo -n "Date Booking (mm/dd/yyyy): "
+       read bookDate
+       now=$(date +%s)
+       tomorrow=$(date -d "tomorrow" +%s)
+       booking_timestamp=$(date -d "$bookDate" +%s)
+       if [ $booking_timestamp -lt $tomorrow ]
+       then
+        echo -e "Bookings must be made one day in advance."
+       else
+        break
+       fi
+      done
+      echo -n "Time From (hh:mm): "
+      read timeFrom
+      echo -n "Time To (hh:mm): "
+      read timeTo
+      echo -n "Reason for Booking: "
+      read bookReason
+
+      if [ -n "$bookDate" -a -n "$timeFrom" -a -n "$timeTo" -a -n "$bookReason" ]
+      then
+       echo
+       echo -e "Press (s) to save & generate the venue booking details or Press (c) to cancel the Venue Booking and return to University Venue Management Menu."
+       read -n 1 -s bookChoice2
+       case "$bookChoice2" in
+  	c|C) echo
+             echo -e "+============================================+" | sed -e :a -e "s/^.\{1,$(tput cols)\}$/ & /;ta" | tr -d '\n' | head -c $(tput cols)
+             echo -e "|Booking Cancelled! Returning to Main Menu...|" | sed -e :a -e "s/^.\{1,$(tput cols)\}$/ & /;ta" | tr -d '\n' | head -c $(tput cols)
+             echo -e "+============================================+" | sed -e :a -e "s/^.\{1,$(tput cols)\}$/ & /;ta" | tr -d '\n' | head -c $(tput cols)
+       	     wait 2
+       	     bash main_menu ;;
+        s|S) echo 
+             echo "$staffID:$staffName:$roomNo:$bookDate:$timeFrom:$timeTo:$bookReason" >> booking.txt
+             echo
+             echo -e "+====================================+" | sed -e :a -e "s/^.\{1,$(tput cols)\}$/ & /;ta" | tr -d '\n' | head -c $(tput cols)
+             echo -e "|Details saved! Generating receipt...|" | sed -e :a -e "s/^.\{1,$(tput cols)\}$/ & /;ta" | tr -d '\n' | head -c $(tput cols)
+             echo -e "+====================================+" | sed -e :a -e "s/^.\{1,$(tput cols)\}$/ & /;ta" | tr -d '\n' | head -c $(tput cols)
+             echo
+	     echo
+             echo
+             echo -e "\033[1mVenue Booking Receipt\033[0m" | sed -e :a -e "s/^.\{1,$(tput cols)\}$/ & /;ta" | tr -d '\n' | head -c $(tput cols)
+             echo
+             echo
+             printf "%-80s %-s\n" "                             StaffID: $staffID" "Staff Name: $staffName"
+	     echo -e "                             Room Number: $roomNo"
+             echo -e "                             Date Booking: $bookDate"
+             printf "%-80s %-s\n" "                             Time From: $timeFrom" "Time To: $timeTo"
+             echo -e "                             Reason for Booking: $bookReason"
+             echo
+             echo
+             echo -e "\033[1mThis is a computer generated receipt with no signature required.\033[0m" | sed -e :a -e "s/^.\{1,$(tput cols)\}$/ & /;ta" | tr -d '\n' | head -c $(tput cols)
+             echo
+	     currentDate="$(date +'%d-%m-%Y %l.%M %p')"
+             echo -e "\033[1mPrinted on $currentDate\033[0m" | sed -e :a -e "s/^.\{1,$(tput cols)\}$/ & /;ta" | tr -d '\n' | head -c $(tput cols)
+             bash main_menu ;;
+        *) echo
+           echo -e "+==============+"
+           echo -e "|Invalid input!|"
+           echo -e "+==============+"
+           bash venue_book_validate ;;
+       esac    
+      else
+       echo
+       echo -e "+=================+"
+       echo -e "|Incomplete input!|"
+       echo -e "+=================+" 
+       bash venue_book_validate
+      fi 
+      echo ;;
+ q|Q) bash main_menu ;;
+ *) echo
+    echo -e "+==============+"
+    echo -e "|Invalid input!|"
+    echo -e "+==============+"
+    bash venue_book_validate ;;
+esac

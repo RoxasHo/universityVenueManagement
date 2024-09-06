@@ -1,0 +1,8 @@
+BlockName:RoomNumber:RoomType:Capacity:Remarks:Status
+SG:SG001:Lecture Hall:300:New venue available for booking:Available
+K:K100:Tutorial Room:26:Under maintenance:Unavailable
+B:B001:Lab:26:For practical use only:Available
+D:D001:Lab:26:For practical use only:Available
+A:A001:Lab:26:For practical use only:Available
+A:A002:Lab:25:For practical use only:Available
+C:C001:Lab:27:For practical use only:Available

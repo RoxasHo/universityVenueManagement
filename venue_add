@@ -1,0 +1,52 @@
+#!/bin/bash
+
+echo
+echo -e "\033[3;1m Add New Venue Screen\033[0m" | sed -e :a -e "s/^.\{1,$(tput cols)\}$/ & /;ta" | tr -d '\n' | head -c $(tput cols)
+echo
+echo -e "\033[1m====================\033[0m" | sed -e :a -e "s/^.\{1,$(tput cols)\}$/ & /;ta" | tr -d '\n' | head -c $(tput cols)
+echo
+
+#text="\033[3;1m Add New Venue Screen\033[0m"
+#text2="\033[1m====================\033[0m"
+#screen_width=$(tput cols)
+#center=$((($screen_width - ${#text}) /2))
+#echo -e "\n$(tput cuf $center)$text"
+#center2=$((($screen_width - ${#text2}) /2))
+#echo -e "\n$(tput cuf $center2)$text2"
+
+echo
+echo -n "Block Name: "
+read blockName
+echo -n "Room Number: "
+read roomNo
+echo -n "Room Type: "
+read roomType
+echo -n "Capacity: "
+read roomCapacity
+echo -n "Remarks: "
+read roomRemark
+if [ -n "$blockName" -a -n "$roomNo" -a -n "$roomType" -a -n "$roomCapacity" -a -n "$roomRemark" ]
+then
+ echo "$blockName:$roomNo:$roomType:$roomCapacity:$roomRemark:Available" >> venue.txt
+else
+ echo
+ echo -e "+=================+"
+ echo -e "|Incomplete input!|"
+ echo -e "+=================+" 
+ bash venue_add
+fi
+echo
+echo -e "Add Another New Venue? (y)es or (q)uit: "
+echo
+echo -e "Press (q) to return to \033[1mUniversity Venue Management Menu\033[0m."
+read -n 1 -s addChoice
+case "$addChoice" in
+ q|Q) bash main_menu ;;
+ y|Y) bash venue_add ;;
+ *) echo
+    echo -e "+==============+"
+    echo -e "|Invalid input!|"
+    echo -e "+==============+" 
+    bash venue_add ;;
+esac
+
